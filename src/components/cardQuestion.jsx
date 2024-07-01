@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { fetchQuestions } from '../services/public.services';
 import { FiClock } from 'react-icons/fi';
 
-function CardQuestion() {
+const CardQuestion = () => {
   const [questionsData, setQuestionsData] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -41,11 +41,12 @@ function CardQuestion() {
 
     return () => clearTimeout(timer);
   }, [timeLeft, answerFeedback]);
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
-};
+  };
 
   const startTimer = () => {
     setTimeLeft(15); 
@@ -121,17 +122,32 @@ function CardQuestion() {
     return shuffledArray;
   };
 
+  // Función para obtener el mensaje según el número de aciertos
+  const getMessage = () => {
+    if (correctAnswers === 4) {
+      return "¡Felicidades! Conseguiste 4 de 5 aciertos.";
+    } else if (correctAnswers === 3) {
+      return "¡Bien! Conseguiste 3 de 5 aciertos.";
+    } else if (correctAnswers === 2) {
+      return "¡Hay que estudiar! Conseguiste 2 de 5 aciertos.";
+    } else if (correctAnswers === 0) {
+      return "Lo siento, conseguiste 0 de 5 aciertos.";
+    } else {
+      return `Obtuviste ${correctAnswers} de 5 aciertos.`;
+    }
+  };
+
   return (
     <>
       <div className="w-1/2 mx-auto bg-white shadow-lg rounded-lg overflow-hidden p-8">
-      <div className="flex items-center justify-between py-4">
-            <h2 className="text-xl font-bold text-black-400">Evaluación 2 Parcial</h2>
-            <div className="flex items-center ">
-                <FiClock className="mr-2  text-indigo-600 " />
-                <p className="text-xl font-semibold text-indigo-600">{formatTime(timeLeft)}</p>
-            </div>
+        <div className="flex items-center justify-between py-4">
+          <h2 className="text-xl font-bold text-black-400">Evaluación 2 Parcial</h2>
+          <div className="flex items-center ">
+            <FiClock className="mr-2 text-indigo-600 " />
+            <p className="text-xl font-semibold text-indigo-600">{formatTime(timeLeft)}</p>
+          </div>
         </div>
-    
+
         {!quizCompleted && questionsData.length > 0 && (
           <>
             <p className="text-lg mb-4">{questionsData[currentQuestionIndex].Content_q}</p>
@@ -149,7 +165,7 @@ function CardQuestion() {
                   } else {
                     optionClass = `bg-gray-200 border-2 border-gray-400`;
                   }
-                }else{
+                } else {
                   if (isSelected && answerFeedback) {
                     optionClass = `bg-${answerFeedback === 'correct' ? 'green' : 'red'}-200 border-2 border-${answerFeedback === 'correct' ? 'green' : 'red'}-600`;
                     icon = <span className={`text-${answerFeedback === 'correct' ? 'green' : 'red'}-600 text-2xl`}>{answerFeedback === 'correct' ? '\u2713' : '\u2717'}</span>;
@@ -160,11 +176,7 @@ function CardQuestion() {
                     optionClass = `bg-red-200 border-2 border-red-600`;
                     icon = <span className={`text-red-600 text-2xl`}>&#10007;</span>;
                   }
-
                 }
-                
-       
-
 
                 return (
                   <div
@@ -179,9 +191,9 @@ function CardQuestion() {
                       id={option.Id_o}
                       className="mr-2"
                       checked={isSelected}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       // No deshabilitar el input cuando se ha proporcionado retroalimentación
-                      disabled={answerFeedback !== null} 
+                      disabled={answerFeedback !== null}
                     />
                     <label htmlFor={option.Id_o} className="text-blue-600 font-medium">{option.Content_o}</label>
                     {icon}
@@ -255,8 +267,8 @@ function CardQuestion() {
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg text-center">
             <h2 className="text-xl font-bold mb-4">Resultado de la Evaluación</h2>
-            <p className="text-lg mb-4">
-              Has respondido correctamente {correctAnswers} de {questionsData.length} preguntas.
+            <p className="text-lg mb-4 font-semibold  text-gray-400">
+              { getMessage()}
             </p>
             {correctAnswers === questionsData.length ? (
               <p className="text-green-600 font-medium">¡Felicidades! Has respondido correctamente todas las preguntas.</p>
@@ -280,11 +292,9 @@ function CardQuestion() {
       )}
     </>
   );
-}
+};
 
 export default CardQuestion;
-
-
 
 
 
